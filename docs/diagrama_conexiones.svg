@@ -1,0 +1,203 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1540" height="960" viewBox="0 0 1540 960">
+<style>
+ text { font-family: "DejaVu Sans", Arial, sans-serif; }
+ .t { font-size: 16px; font-weight: bold; text-anchor: middle; fill: #222; }
+ .s { font-size: 13px; text-anchor: middle; fill: #444; }
+ .p { font-size: 12px; fill: #333; }
+</style>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<rect x="40" y="70" width="230" height="110" rx="8" fill="#fff4f4" stroke="#d62828" stroke-width="2"/>
+<text x="155.0" y="94" class="t">Fuente de poder</text>
+<text x="155.0" y="114" class="s">5 V · 10 A</text>
+<text x="155.0" y="130" class="s">(desde 220 V AC)</text>
+<circle cx="270" cy="105" r="4" fill="#fff" stroke="#333" stroke-width="1.5"/>
+<text x="261" y="109" class="p" text-anchor="end">+5V</text>
+<circle cx="270" cy="150" r="4" fill="#fff" stroke="#333" stroke-width="1.5"/>
+<text x="261" y="154" class="p" text-anchor="end">GND</text>
+<rect x="40" y="330" width="230" height="120" rx="8" fill="#f4f0ff" stroke="#7b3fbf" stroke-width="2"/>
+<text x="155.0" y="354" class="t">App Blynk</text>
+<text x="155.0" y="374" class="s">Android</text>
+<text x="155.0" y="390" class="s">sliders V0–V4, pinza V5/V6</text>
+<text x="155.0" y="406" class="s">rutina V8/V9, STOP V10</text>
+<rect x="40" y="640" width="230" height="140" rx="8" fill="#f4f0ff" stroke="#7b3fbf" stroke-width="2"/>
+<text x="155.0" y="664" class="t">PC · Python</text>
+<text x="155.0" y="684" class="s">brazo_gui.py</text>
+<text x="155.0" y="700" class="s">DH + cinemática inversa</text>
+<text x="155.0" y="716" class="s">rutina detectar/apilar</text>
+<rect x="360" y="300" width="210" height="430" rx="8" fill="#eef6ff" stroke="#1d6fd8" stroke-width="2"/>
+<text x="465.0" y="324" class="t">ESP32</text>
+<text x="465.0" y="344" class="s">DevKit</text>
+<circle cx="570" cy="380" r="4" fill="#fff" stroke="#333" stroke-width="1.5"/>
+<text x="561" y="384" class="p" text-anchor="end">3V3</text>
+<circle cx="570" cy="420" r="4" fill="#fff" stroke="#333" stroke-width="1.5"/>
+<text x="561" y="424" class="p" text-anchor="end">GND</text>
+<circle cx="570" cy="480" r="4" fill="#fff" stroke="#333" stroke-width="1.5"/>
+<text x="561" y="484" class="p" text-anchor="end">GPIO26 (SDA)</text>
+<circle cx="570" cy="520" r="4" fill="#fff" stroke="#333" stroke-width="1.5"/>
+<text x="561" y="524" class="p" text-anchor="end">GPIO27 (SCL)</text>
+<circle cx="570" cy="600" r="4" fill="#fff" stroke="#333" stroke-width="1.5"/>
+<text x="561" y="604" class="p" text-anchor="end">GPIO25 (TRIG)</text>
+<circle cx="570" cy="640" r="4" fill="#fff" stroke="#333" stroke-width="1.5"/>
+<text x="561" y="644" class="p" text-anchor="end">GPIO33 (ECHO)</text>
+<circle cx="360" cy="700" r="4" fill="#fff" stroke="#333" stroke-width="1.5"/>
+<text x="369" y="704" class="p" text-anchor="start">USB</text>
+<rect x="680" y="230" width="230" height="470" rx="8" fill="#eefaf2" stroke="#1a9e55" stroke-width="2"/>
+<text x="795.0" y="254" class="t">PCA9685</text>
+<text x="795.0" y="274" class="s">driver PWM 16 canales</text>
+<text x="795.0" y="290" class="s">dirección I²C 0x40</text>
+<circle cx="680" cy="380" r="4" fill="#fff" stroke="#333" stroke-width="1.5"/>
+<text x="689" y="384" class="p" text-anchor="start">VCC (lógica)</text>
+<circle cx="680" cy="420" r="4" fill="#fff" stroke="#333" stroke-width="1.5"/>
+<text x="689" y="424" class="p" text-anchor="start">GND</text>
+<circle cx="680" cy="480" r="4" fill="#fff" stroke="#333" stroke-width="1.5"/>
+<text x="689" y="484" class="p" text-anchor="start">SDA</text>
+<circle cx="680" cy="520" r="4" fill="#fff" stroke="#333" stroke-width="1.5"/>
+<text x="689" y="524" class="p" text-anchor="start">SCL</text>
+<text x="700" y="650" class="p" fill="#6b7280" style="text-anchor:start">V+ (borne de servos): sin uso</text>
+<text x="700" y="668" class="p" fill="#6b7280" style="text-anchor:start">los servos se alimentan directo</text>
+<rect x="1100" y="70" width="320" height="66" rx="8" fill="#fff8ec" stroke="#555" stroke-width="2"/>
+<text x="1162" y="96" class="t" fill="#222" style="text-anchor:start">Servo 1 · Base (q1)</text>
+<text x="1162" y="116" class="s" fill="#444" style="text-anchor:start">MG995 · 3 cables</text>
+<circle cx="910" cy="270" r="4" fill="#fff" stroke="#333" stroke-width="1.5"/>
+<text x="901" y="274" class="p" text-anchor="end">CH10</text>
+<polyline points="910,270 945,270 945,88 1100,88" fill="none" stroke="#1d6fd8" stroke-width="2" stroke-linejoin="round"/>
+<text x="1108" y="84" class="p" fill="#1d6fd8" style="text-anchor:start">señal</text>
+<rect x="1100" y="160" width="320" height="66" rx="8" fill="#fff8ec" stroke="#555" stroke-width="2"/>
+<text x="1162" y="186" class="t" fill="#222" style="text-anchor:start">Servo 2 · Hombro (q2)</text>
+<text x="1162" y="206" class="s" fill="#444" style="text-anchor:start">MG995 · 3 cables</text>
+<circle cx="910" cy="312" r="4" fill="#fff" stroke="#333" stroke-width="1.5"/>
+<text x="901" y="316" class="p" text-anchor="end">CH11</text>
+<polyline points="910,312 961,312 961,178 1100,178" fill="none" stroke="#1d6fd8" stroke-width="2" stroke-linejoin="round"/>
+<text x="1108" y="174" class="p" fill="#1d6fd8" style="text-anchor:start">señal</text>
+<rect x="1100" y="250" width="320" height="66" rx="8" fill="#fff8ec" stroke="#555" stroke-width="2"/>
+<text x="1162" y="276" class="t" fill="#222" style="text-anchor:start">Servo 3 · Codo (q3)</text>
+<text x="1162" y="296" class="s" fill="#444" style="text-anchor:start">MG995 · 3 cables</text>
+<circle cx="910" cy="354" r="4" fill="#fff" stroke="#333" stroke-width="1.5"/>
+<text x="901" y="358" class="p" text-anchor="end">CH12</text>
+<polyline points="910,354 977,354 977,268 1100,268" fill="none" stroke="#1d6fd8" stroke-width="2" stroke-linejoin="round"/>
+<text x="1108" y="264" class="p" fill="#1d6fd8" style="text-anchor:start">señal</text>
+<rect x="1100" y="400" width="320" height="66" rx="8" fill="#fffdf0" stroke="#555" stroke-width="2"/>
+<text x="1162" y="426" class="t" fill="#222" style="text-anchor:start">Servo 4 · Giro muñeca (q4)</text>
+<text x="1162" y="446" class="s" fill="#444" style="text-anchor:start">MG90S · 3 cables</text>
+<circle cx="910" cy="396" r="4" fill="#fff" stroke="#333" stroke-width="1.5"/>
+<text x="901" y="400" class="p" text-anchor="end">CH13</text>
+<polyline points="910,396 993,396 993,418 1100,418" fill="none" stroke="#1d6fd8" stroke-width="2" stroke-linejoin="round"/>
+<text x="1108" y="414" class="p" fill="#1d6fd8" style="text-anchor:start">señal</text>
+<rect x="1100" y="490" width="320" height="66" rx="8" fill="#fffdf0" stroke="#555" stroke-width="2"/>
+<text x="1162" y="516" class="t" fill="#222" style="text-anchor:start">Servo 5 · Muñeca (q5)</text>
+<text x="1162" y="536" class="s" fill="#444" style="text-anchor:start">MG90S · 3 cables</text>
+<circle cx="910" cy="438" r="4" fill="#fff" stroke="#333" stroke-width="1.5"/>
+<text x="901" y="442" class="p" text-anchor="end">CH14</text>
+<polyline points="910,438 1009,438 1009,508 1100,508" fill="none" stroke="#1d6fd8" stroke-width="2" stroke-linejoin="round"/>
+<text x="1108" y="504" class="p" fill="#1d6fd8" style="text-anchor:start">señal</text>
+<rect x="1100" y="580" width="320" height="66" rx="8" fill="#fffdf0" stroke="#555" stroke-width="2"/>
+<text x="1162" y="606" class="t" fill="#222" style="text-anchor:start">Servo 6 · Pinza</text>
+<text x="1162" y="626" class="s" fill="#444" style="text-anchor:start">SG90 · 3 cables</text>
+<circle cx="910" cy="480" r="4" fill="#fff" stroke="#333" stroke-width="1.5"/>
+<text x="901" y="484" class="p" text-anchor="end">CH15</text>
+<polyline points="910,480 1025,480 1025,598 1100,598" fill="none" stroke="#1d6fd8" stroke-width="2" stroke-linejoin="round"/>
+<text x="1108" y="594" class="p" fill="#1d6fd8" style="text-anchor:start">señal</text>
+<polyline points="270,105 320,105 320,30 1040,30 1040,286" fill="none" stroke="#d62828" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="320,30 320,45 1065,45 1065,785" fill="none" stroke="#d62828" stroke-width="3" stroke-linejoin="round"/>
+<circle cx="320" cy="30" r="4.5" fill="#d62828"/>
+<text x="680" y="22" class="p" fill="#d62828" style="text-anchor:middle">+5 V  línea servos grandes (3 × MG995)</text>
+<text x="680" y="62" class="p" fill="#d62828" style="text-anchor:middle">+5 V  línea servos chicos (2 × MG90S + SG90)</text>
+<polyline points="1040,106 1100,106" fill="none" stroke="#d62828" stroke-width="2" stroke-linejoin="round"/>
+<circle cx="1040" cy="106" r="4.5" fill="#d62828"/>
+<text x="1108" y="102" class="p" fill="#d62828" style="text-anchor:start">+5V</text>
+<polyline points="1040,196 1100,196" fill="none" stroke="#d62828" stroke-width="2" stroke-linejoin="round"/>
+<circle cx="1040" cy="196" r="4.5" fill="#d62828"/>
+<text x="1108" y="192" class="p" fill="#d62828" style="text-anchor:start">+5V</text>
+<polyline points="1040,286 1100,286" fill="none" stroke="#d62828" stroke-width="2" stroke-linejoin="round"/>
+<circle cx="1040" cy="286" r="4.5" fill="#d62828"/>
+<text x="1108" y="282" class="p" fill="#d62828" style="text-anchor:start">+5V</text>
+<polyline points="1065,436 1100,436" fill="none" stroke="#d62828" stroke-width="2" stroke-linejoin="round"/>
+<circle cx="1065" cy="436" r="4.5" fill="#d62828"/>
+<text x="1108" y="432" class="p" fill="#d62828" style="text-anchor:start">+5V</text>
+<polyline points="1065,526 1100,526" fill="none" stroke="#d62828" stroke-width="2" stroke-linejoin="round"/>
+<circle cx="1065" cy="526" r="4.5" fill="#d62828"/>
+<text x="1108" y="522" class="p" fill="#d62828" style="text-anchor:start">+5V</text>
+<polyline points="1065,616 1100,616" fill="none" stroke="#d62828" stroke-width="2" stroke-linejoin="round"/>
+<circle cx="1065" cy="616" r="4.5" fill="#d62828"/>
+<text x="1108" y="612" class="p" fill="#d62828" style="text-anchor:start">+5V</text>
+<polyline points="1420,120 1455,120" fill="none" stroke="#222222" stroke-width="2" stroke-linejoin="round"/>
+<circle cx="1455" cy="120" r="4.5" fill="#222222"/>
+<text x="1412" y="124" class="p" fill="#222222" style="text-anchor:end">GND</text>
+<polyline points="1420,210 1455,210" fill="none" stroke="#222222" stroke-width="2" stroke-linejoin="round"/>
+<circle cx="1455" cy="210" r="4.5" fill="#222222"/>
+<text x="1412" y="214" class="p" fill="#222222" style="text-anchor:end">GND</text>
+<polyline points="1420,300 1455,300" fill="none" stroke="#222222" stroke-width="2" stroke-linejoin="round"/>
+<circle cx="1455" cy="300" r="4.5" fill="#222222"/>
+<text x="1412" y="304" class="p" fill="#222222" style="text-anchor:end">GND</text>
+<polyline points="1420,450 1455,450" fill="none" stroke="#222222" stroke-width="2" stroke-linejoin="round"/>
+<circle cx="1455" cy="450" r="4.5" fill="#222222"/>
+<text x="1412" y="454" class="p" fill="#222222" style="text-anchor:end">GND</text>
+<polyline points="1420,540 1455,540" fill="none" stroke="#222222" stroke-width="2" stroke-linejoin="round"/>
+<circle cx="1455" cy="540" r="4.5" fill="#222222"/>
+<text x="1412" y="544" class="p" fill="#222222" style="text-anchor:end">GND</text>
+<polyline points="1420,630 1455,630" fill="none" stroke="#222222" stroke-width="2" stroke-linejoin="round"/>
+<circle cx="1455" cy="630" r="4.5" fill="#222222"/>
+<text x="1412" y="634" class="p" fill="#222222" style="text-anchor:end">GND</text>
+<polyline points="1455,120 1455,905" fill="none" stroke="#222222" stroke-width="3" stroke-linejoin="round"/>
+<text x="1463" y="370" class="p" fill="#222222" style="text-anchor:start">negativos</text>
+<text x="1463" y="384" class="p" fill="#222222" style="text-anchor:start">soldados</text>
+<text x="1463" y="398" class="p" fill="#222222" style="text-anchor:start">en 1 línea</text>
+<polyline points="300,905 1455,905" fill="none" stroke="#222222" stroke-width="4" stroke-linejoin="round"/>
+<text x="860" y="931" class="s" fill="#222222" style="text-anchor:middle">GND COMÚN (riel negativo de la protoboard) — fuente, ESP32, PCA9685, sensor y servos</text>
+<polyline points="270,150 300,150 300,905" fill="none" stroke="#222222" stroke-width="2.4" stroke-linejoin="round"/>
+<circle cx="300" cy="905" r="4.5" fill="#222222"/>
+<polyline points="570,420 620,420 620,905" fill="none" stroke="#222222" stroke-width="2.4" stroke-linejoin="round"/>
+<circle cx="620" cy="905" r="4.5" fill="#222222"/>
+<polyline points="680,420 650,420 650,905" fill="none" stroke="#222222" stroke-width="2.4" stroke-linejoin="round"/>
+<circle cx="650" cy="905" r="4.5" fill="#222222"/>
+<polyline points="570,380 680,380" fill="none" stroke="#b45309" stroke-width="2.4" stroke-linejoin="round"/>
+<text x="625" y="372" class="p" fill="#b45309" style="text-anchor:middle">3.3 V</text>
+<polyline points="570,480 680,480" fill="none" stroke="#1a9e55" stroke-width="2.4" stroke-linejoin="round"/>
+<polyline points="570,520 680,520" fill="none" stroke="#1a9e55" stroke-width="2.4" stroke-linejoin="round"/>
+<text x="625" y="472" class="p" fill="#1a9e55" style="text-anchor:middle">SDA</text>
+<text x="625" y="512" class="p" fill="#1a9e55" style="text-anchor:middle">SCL</text>
+<rect x="700" y="755" width="300" height="110" rx="8" fill="#fff6ea" stroke="#e07a00" stroke-width="2"/>
+<text x="850.0" y="779" class="t">HC-SR04 (en la pinza)</text>
+<text x="850.0" y="799" class="s">sensor ultrasónico</text>
+<circle cx="1000" cy="785" r="4" fill="#fff" stroke="#333" stroke-width="1.5"/>
+<text x="991" y="789" class="p" text-anchor="end">VCC</text>
+<circle cx="1000" cy="835" r="4" fill="#fff" stroke="#333" stroke-width="1.5"/>
+<text x="991" y="839" class="p" text-anchor="end">GND</text>
+<circle cx="700" cy="790" r="4" fill="#fff" stroke="#333" stroke-width="1.5"/>
+<text x="709" y="794" class="p" text-anchor="start">TRIG</text>
+<circle cx="700" cy="835" r="4" fill="#fff" stroke="#333" stroke-width="1.5"/>
+<text x="709" y="839" class="p" text-anchor="start">ECHO</text>
+<polyline points="1065,785 1000,785" fill="none" stroke="#d62828" stroke-width="2" stroke-linejoin="round"/>
+<circle cx="1065" cy="785" r="4.5" fill="#d62828"/>
+<polyline points="1000,835 1090,835 1090,905" fill="none" stroke="#222222" stroke-width="2" stroke-linejoin="round"/>
+<circle cx="1090" cy="905" r="4.5" fill="#222222"/>
+<polyline points="570,600 600,600 600,790 700,790" fill="none" stroke="#e07a00" stroke-width="2.4" stroke-linejoin="round"/>
+<polyline points="690,835 680.0,835 675.0,842 665.0,828 655.0,842 645.0,828 635.0,842 625.0,828 620.0,835 610,835" fill="none" stroke="#e07a00" stroke-width="2" stroke-linejoin="round"/>
+<text x="650.0" y="823" class="p" fill="#e07a00" style="text-anchor:middle">1 kΩ</text>
+<polyline points="610,835 590,835 590,640 570,640" fill="none" stroke="#e07a00" stroke-width="2.4" stroke-linejoin="round"/>
+<circle cx="590" cy="835" r="4.5" fill="#e07a00"/>
+<polyline points="590,835 590,842.5 597,846.25 583,853.75 597,861.25 583,868.75 597,876.25 583,883.75 590,887.5 590,895" fill="none" stroke="#e07a00" stroke-width="2" stroke-linejoin="round"/>
+<text x="604" y="869.0" class="p" fill="#e07a00" style="text-anchor:start">2 kΩ</text>
+<polyline points="590,895 590,905" fill="none" stroke="#e07a00" stroke-width="2" stroke-linejoin="round"/>
+<circle cx="590" cy="905" r="4.5" fill="#222222"/>
+<text x="470" y="810" class="p" fill="#e07a00" style="text-anchor:middle">divisor 5 V → 3.3 V</text>
+<text x="470" y="826" class="p" fill="#e07a00" style="text-anchor:middle">(el ECHO sale a 5 V)</text>
+<polyline points="270,710 360,710" fill="none" stroke="#7b3fbf" stroke-width="3" stroke-linejoin="round"/>
+<text x="315" y="700" class="p" fill="#7b3fbf" style="text-anchor:middle">USB serial</text>
+<text x="315" y="730" class="p" fill="#7b3fbf" style="text-anchor:middle">115200 bd</text>
+<polyline points="270,390 360,390" fill="none" stroke="#7b3fbf" stroke-width="2.4" stroke-linejoin="round" stroke-dasharray="7,5"/>
+<text x="315" y="380" class="p" fill="#7b3fbf" style="text-anchor:middle">WiFi</text>
+<text x="315" y="410" class="p" fill="#7b3fbf" style="text-anchor:middle">(nube Blynk)</text>
+<polyline points="48,205 78,205" fill="none" stroke="#d62828" stroke-width="3" stroke-linejoin="round"/>
+<text x="86" y="209" class="p" fill="#333" style="text-anchor:start">+5 V potencia</text>
+<polyline points="48,227 78,227" fill="none" stroke="#222222" stroke-width="3" stroke-linejoin="round"/>
+<text x="86" y="231" class="p" fill="#333" style="text-anchor:start">GND común</text>
+<polyline points="48,249 78,249" fill="none" stroke="#1d6fd8" stroke-width="3" stroke-linejoin="round"/>
+<text x="86" y="253" class="p" fill="#333" style="text-anchor:start">señal PWM</text>
+<polyline points="48,271 78,271" fill="none" stroke="#1a9e55" stroke-width="3" stroke-linejoin="round"/>
+<text x="86" y="275" class="p" fill="#333" style="text-anchor:start">I²C</text>
+<polyline points="48,293 78,293" fill="none" stroke="#e07a00" stroke-width="3" stroke-linejoin="round"/>
+<text x="86" y="297" class="p" fill="#333" style="text-anchor:start">sensor</text>
+<polyline points="48,315 78,315" fill="none" stroke="#7b3fbf" stroke-width="3" stroke-linejoin="round"/>
+<text x="86" y="319" class="p" fill="#333" style="text-anchor:start">datos</text>
+</svg>
