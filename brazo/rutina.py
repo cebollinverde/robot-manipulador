@@ -5,6 +5,7 @@ Rutinas (mismo numero que el selector V8 de Blynk):
   1 = Apilar todos los cubos detectados en PUNTO_APILADO
   2 = Ordenar los cubos detectados en FILA_ORDEN
   3 = Solo escanear los puntos (prueba del sensor)
+  4 = Repetir el apilado A -> B de dos cajas enseñado con el brazo real
 
 Funciona igual con el ESP32 real o con el Simulador (misma interfaz).
 Se ejecuta en un hilo aparte; la interfaz recibe avisos por el callback 'avisar'.

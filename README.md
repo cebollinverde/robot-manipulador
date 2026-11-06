@@ -3,6 +3,11 @@
 El resumen cronológico de la evolución y de las pruebas físicas está en
 [`CAMBIOS.md`](CAMBIOS.md).
 
+La configuración completa de Blynk está documentada en
+[`docs/BLYNK.md`](docs/BLYNK.md) y respaldada de forma estructurada en
+[`docs/blynk_template.json`](docs/blynk_template.json). Ninguno de esos archivos
+contiene el token del dispositivo ni claves WiFi.
+
 ```
 proyecto/
 ├── brazo_gui.py            ← interfaz (adaptada de la de Diego): DH en vivo + control + rutina
@@ -45,6 +50,12 @@ de la rutina. Le manda al ESP32 porcentajes 0–100 % por serial.
 Blynk/WiFi corre en el núcleo 0, así una caída de WiFi no congela el brazo.
 
 **App Blynk** mueve el brazo a mano, abre/cierra la pinza, pide rutinas y tiene el STOP.
+
+El panel web de la plantilla **Manipulador Robotico** usa los 19 pines virtuales
+V0–V18. Para repetir la secuencia validada: mantener `brazo_gui.py` abierto y
+conectado al ESP32, elegir **Apilado 2 cajas** en V8 y pulsar **EJECUTAR** en V9.
+El selector solo elige la rutina; el movimiento comienza al pulsar V9. El STOP
+de V10 queda disponible durante toda la ejecución.
 
 ### La rutina (V8 = 1, 2, 3 o 4 y luego V9, o el botón ▶ de la interfaz)
 
@@ -96,6 +107,10 @@ ESP32 → PC sin que se pida: `RUTINA,n` (V9), `STOP_REQUEST` (V10), `READY` (al
 | V13–V15 | Valor | X, Y, Z del TCP calculados con DH |
 | V16 | Slider 0–100 | Pinza (para probar cuánto abre/cierra) |
 | V17 / V18 | Botón Push | Guardar la posición actual del V16 como «abierta» / «cerrada» |
+
+La plantilla publicada usa `TMPL24p6M39YQ`. V12 tiene 20 como valor
+predeterminado. Al reconectarse, el ESP32 sincroniza V8 y V12 desde Blynk sin
+sobrescribir el valor almacenado en la nube.
 
 ## Medidas del brazo (pestaña «Modelo»)
 

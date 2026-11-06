@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "verified_at": "2026-11-06",
+  "template": {
+    "name": "Manipulador Robotico",
+    "template_id": "TMPL24p6M39YQ",
+    "device": "Brazo ESP32"
+  },
+  "security": {
+    "contains_auth_token": false,
+    "contains_wifi_credentials": false,
+    "local_credentials_file": "Manipulador/secrets.h"
+  },
+  "datastreams": [
+    {"pin":"V0","name":"Base","display":"Base","type":"double","min":0,"max":100,"default":0,"unit":"%"},
+    {"pin":"V1","name":"Hombro","display":"Hombro","type":"double","min":0,"max":100,"default":0,"unit":null},
+    {"pin":"V2","name":"Codo","display":"Codo","type":"double","min":0,"max":100,"default":0,"unit":"%"},
+    {"pin":"V3","name":"Muñeca 1","display":"Muñeca 1","type":"double","min":0,"max":100,"default":0,"unit":"%"},
+    {"pin":"V4","name":"Muñeca 2","display":"Muñeca 2","type":"double","min":0,"max":100,"default":0,"unit":"%"},
+    {"pin":"V5","name":"Abrir pinza","display":"Abrir pinza","type":"integer","min":0,"max":1,"default":0,"unit":"%"},
+    {"pin":"V6","name":"Cerrar pinza","display":"Cerrar pinza","type":"integer","min":0,"max":1,"default":0,"unit":"%"},
+    {"pin":"V7","name":"Distancia Ultrasonico","display":"Distancia HC-SR04","type":"double","min":-1,"max":400,"default":0,"unit":"cm"},
+    {"pin":"V8","name":"Seleccionar rutina","display":"Seleccionar rutina","type":"integer","min":0,"max":3,"default":0,"unit":"%"},
+    {"pin":"V9","name":"Ejecutar rutina","display":"Ejecutar rutina","type":"double","min":0,"max":1,"default":0,"unit":"%"},
+    {"pin":"V10","name":"Detener rutina","display":"STOP / Reanudar","type":"integer","min":0,"max":1,"default":0,"unit":"%"},
+    {"pin":"V11","name":"Estado de la rutina","display":"Estado de la rutina","type":"string","unit":null},
+    {"pin":"V12","name":"Velocidad","display":"Velocidad","type":"integer","min":1,"max":100,"default":20,"unit":null},
+    {"pin":"V13","name":"TCP X","display":"TCP X","type":"double","min":-50,"max":50,"default":0,"unit":null},
+    {"pin":"V14","name":"TCP Y","display":"TCP Y","type":"double","min":-50,"max":50,"default":0,"unit":null},
+    {"pin":"V15","name":"TCP Z","display":"TCP Z","type":"double","min":-50,"max":50,"default":0,"unit":null},
+    {"pin":"V16","name":"Pinza manual","display":"Calibrar pinza","type":"double","min":0,"max":100,"default":0,"unit":"%"},
+    {"pin":"V17","name":"Guardar abierta","display":"Guardar como abierta","type":"integer","min":0,"max":1,"default":0,"unit":null},
+    {"pin":"V18","name":"Guardar cerrada","display":"Guardar como cerrada","type":"integer","min":0,"max":1,"default":0,"unit":null}
+  ],
+  "widgets": [
+    {"type":"segmented_control","pin":"V8","title":"Seleccionar rutina","options":[
+      {"value":0,"label":"Apilar"},
+      {"value":3,"label":"Apilado 2 cajas"},
+      {"value":1,"label":"Ordenar fila"},
+      {"value":2,"label":"Solo escanear"}
+    ]},
+    {"type":"button","pin":"V9","title":"Ejecutar rutina","mode":"push","label":"EJECUTAR"},
+    {"type":"switch","pin":"V10","title":"STOP / Reanudar"},
+    {"type":"slider","pin":"V12","title":"Velocidad"},
+    {"type":"label","pin":"V11","title":"Estado de la rutina"},
+    {"type":"slider","pin":"V0","title":"Base"},
+    {"type":"slider","pin":"V1","title":"Hombro"},
+    {"type":"slider","pin":"V2","title":"Codo"},
+    {"type":"slider","pin":"V3","title":"Muñeca 1"},
+    {"type":"slider","pin":"V4","title":"Muñeca 2"},
+    {"type":"slider","pin":"V16","title":"Calibrar pinza"},
+    {"type":"button","pin":"V5","title":"Abrir pinza"},
+    {"type":"button","pin":"V6","title":"Cerrar pinza"},
+    {"type":"button","pin":"V17","title":"Guardar como abierta"},
+    {"type":"button","pin":"V18","title":"Guardar como cerrada"},
+    {"type":"gauge","pin":"V7","title":"Distancia HC-SR04"},
+    {"type":"label","pin":"V13","title":"TCP X"},
+    {"type":"label","pin":"V14","title":"TCP Y"},
+    {"type":"label","pin":"V15","title":"TCP Z"}
+  ]
+}

@@ -58,8 +58,17 @@ registrada la configuración que fue validada con el brazo físico.
 
 - El firmware ahora admite una cuarta opción en el menú V8.
 - V8 acepta los valores 0–3 y V9 puede iniciar las rutinas 1–4.
-- Para usar la rutina nueva desde Blynk es necesario cargar el firmware
-  actualizado y añadir **Apilado enseñado** como cuarto elemento del menú V8.
+- Se publicó el panel web de la plantilla `TMPL24p6M39YQ` en el dispositivo
+  **Brazo ESP32** con los 19 controles y lecturas V0–V18.
+- V8 ofrece **Apilar**, **Apilado 2 cajas**, **Ordenar fila** y **Solo escanear**;
+  V9 ejecuta la opción elegida y V10 funciona como STOP/reanudación.
+- Se añadieron al panel la velocidad, el estado de rutina, los seis controles
+  manuales, la calibración de la pinza, el HC-SR04 y las coordenadas TCP.
+- V12 quedó con 20 como valor predeterminado, igual que la secuencia validada.
+- Se corrigió la reconexión del firmware: ahora sincroniza V8 y V12 desde Blynk
+  sin sobrescribir inmediatamente la velocidad almacenada en la nube.
+- La definición reproducible del panel quedó respaldada en
+  `docs/blynk_template.json`, sin tokens ni claves WiFi.
 
 ## Archivos principales modificados
 
@@ -72,6 +81,8 @@ registrada la configuración que fue validada con el brazo físico.
 | `brazo/apilado_ensenado.json` | Trayectoria exacta y parámetros de la prueba exitosa |
 | `brazo/rutina.py` | Detección, espera segura y ejecución automática de dos cajas |
 | `README.md` | Instalación, credenciales y explicación de la nueva rutina |
+| `docs/BLYNK.md` | Uso, verificación y reconstrucción del panel Blynk |
+| `docs/blynk_template.json` | Respaldo estructurado de flujos y widgets V0–V18 |
 
 ## Alcance de la calibración
 

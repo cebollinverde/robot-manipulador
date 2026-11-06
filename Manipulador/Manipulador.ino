@@ -74,7 +74,9 @@ volatile bool pedidoEscaneo = false;
 
 const unsigned long VIGILANCIA_MS = 15000;   // sin noticias del PC -> liberar
 
-volatile int velocidad = 50;
+// Coincide con la velocidad validada para la rutina enseñada y con el valor
+// predeterminado de V12 en Blynk.
+volatile int velocidad = 20;
 volatile int rutina = 1;      // si la app aun no manda V8: Apilar
 volatile bool rutinaActiva = false;
 volatile bool bloqueado = false;
@@ -692,11 +694,13 @@ BLYNK_WRITE(V10) {
 BLYNK_WRITE(V12) { velocidad = constrain(param.asInt(), 1, 100); }
 
 BLYNK_CONNECTED() {
-  Blynk.syncVirtual(V8, V12);   // recuperar la rutina elegida y la velocidad guardadas
+  // Recuperar la rutina elegida y la velocidad guardadas en Blynk. No se debe
+  // escribir V12 inmediatamente después: eso pisaría el valor del servidor
+  // antes de que BLYNK_WRITE(V12) alcance a restaurarlo.
+  Blynk.syncVirtual(V8, V12);
   for (int i = 0; i < 5; i++) Blynk.virtualWrite(i, normalizar(i, destino[i]));
   Blynk.virtualWrite(V16, normalizar(5, destino[5]));
   Blynk.virtualWrite(V10, bloqueado ? 1 : 0);
-  Blynk.virtualWrite(V12, (int)velocidad);
   Blynk.virtualWrite(V11, bloqueado ? "DETENIDO" :
                           rutinaActiva ? "EJECUTANDO" : "CONECTADO");
 }
