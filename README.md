@@ -1,5 +1,8 @@
 # Manipulador robótico — código del laboratorio
 
+El resumen cronológico de la evolución y de las pruebas físicas está en
+[`CAMBIOS.md`](CAMBIOS.md).
+
 ```
 proyecto/
 ├── brazo_gui.py            ← interfaz (adaptada de la de Diego): DH en vivo + control + rutina
@@ -26,9 +29,11 @@ python -m brazo.dh 0 62 -89 0 2    # lo mismo para los ángulos q1..q5 que quier
 ## Puesta en marcha
 
 1. `pip install numpy matplotlib pyserial`
-2. Cargar `Manipulador/Manipulador.ino` al ESP32 (librerías: **Blynk**, **Adafruit PWM Servo Driver**).
-3. `python brazo_gui.py`
-4. Elegir **Simulación** para probar sin brazo, o el puerto del ESP32 (COMx / /dev/ttyUSB0) → **Conectar**.
+2. Copiar `Manipulador/secrets.example.h` como `Manipulador/secrets.h` y escribir ahí el
+   token de Blynk y las redes WiFi. `secrets.h` está ignorado por Git.
+3. Cargar `Manipulador/Manipulador.ino` al ESP32 (librerías: **Blynk**, **Adafruit PWM Servo Driver**).
+4. `python brazo_gui.py`
+5. Elegir **Simulación** para probar sin brazo, o el puerto del ESP32 (COMx / /dev/ttyUSB0) → **Conectar**.
    Cerrar el Monitor Serie de Arduino antes: el puerto no se puede abrir dos veces.
 
 ## Qué hace cada parte
@@ -41,13 +46,19 @@ Blynk/WiFi corre en el núcleo 0, así una caída de WiFi no congela el brazo.
 
 **App Blynk** mueve el brazo a mano, abre/cierra la pinza, pide rutinas y tiene el STOP.
 
-### La rutina (V8 = 1, 2 o 3 y luego V9, o el botón ▶ de la interfaz)
+### La rutina (V8 = 1, 2, 3 o 4 y luego V9, o el botón ▶ de la interfaz)
 
 | N° | Qué hace |
 |---|---|
 | 1 | Escanea A, B y C con el sensor; mide la pila; toma cada cubo detectado y lo apila |
 | 2 | Igual, pero deja los cubos en fila (`FILA_ORDEN`) |
 | 3 | Solo escanea (para calibrar el sensor) |
+| 4 | Repite el apilado A→B de dos cajas enseñado físicamente (`apilado_ensenado.json`) |
+
+La rutina 4 trabaja a velocidad 20/100. Espera una caja en A, la confirma con dos
+mediciones del HC-SR04, avisa que se retiren las manos y comienza tras 2 segundos.
+Después de dejar la primera caja vuelve a A y espera la segunda. Su último movimiento
+incluye la corrección validada de 5 mm alejándose de la base antes de abrir la pinza.
 
 Detección: el brazo apunta el sensor al punto. Con la DH se sabe a qué distancia **debería**
 estar la mesa; si el sensor mide claramente menos, hay un objeto. La altura medida
@@ -77,7 +88,7 @@ ESP32 → PC sin que se pida: `RUTINA,n` (V9), `STOP_REQUEST` (V10), `READY` (al
 | V0–V4 | Slider 0–100 | Servos 1–5 |
 | V5 / V6 | Botón | Abrir / cerrar pinza |
 | V7 | Valor | Distancia del sensor [cm] |
-| V8 | Menú (envía 0, 1, 2) | 0 = Apilar, 1 = Ordenar, 2 = Escanear |
+| V8 | Menú (envía 0, 1, 2, 3) | 0 = Apilar, 1 = Ordenar, 2 = Escanear, 3 = Apilado enseñado |
 | V9 | Botón | Iniciar rutina |
 | V10 | Interruptor | 1 = STOP, 0 = reanudar |
 | V11 | Etiqueta | Estado (EJECUTANDO, TOMANDO A, APILANDO 2…) |
@@ -136,8 +147,8 @@ En el hardware:
 - El VCC de lógica del PCA9685 va a 3,3 V del ESP32. El borne V+ queda sin usar, porque
   los servos se alimentan directo de la fuente.
 
-> WiFi: el `.ino` trae dos redes («Pablo» y «Usach-funcionarios») y se conecta a la que
-> encuentre. El ESP32 solo usa 2,4 GHz.
+> WiFi: las redes se configuran solamente en `Manipulador/secrets.h`. El ESP32 se conecta
+> a la primera red guardada que encuentre y solo admite redes de 2,4 GHz.
 >
-> El `.ino` lleva el token de Blynk y la clave del WiFi. En el anexo del informe conviene
-> reemplazarlos por `"XXXX"`.
+> Para el informe o para compartir el código se usa `secrets.example.h`, que no contiene
+> credenciales reales. Nunca agreguen `secrets.h` a Git.

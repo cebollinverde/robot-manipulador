@@ -17,7 +17,10 @@
 */
 #define BLYNK_TEMPLATE_ID "TMPL24p6M39YQ"
 #define BLYNK_TEMPLATE_NAME "Manipulador Robotico"
-#define BLYNK_AUTH_TOKEN "k_9-X3zwv3cRykcvjtVomFGKejeEtUa1"
+
+// Token de Blynk y redes WiFi. Este archivo es local y esta ignorado por Git.
+// La primera vez, copiar secrets.example.h como secrets.h y completar los datos.
+#include "secrets.h"
 
 #include <WiFi.h>
 #include <WiFiMulti.h>
@@ -33,19 +36,8 @@
 
 // Redes WiFi: se conecta a la que encuentre (casa o laboratorio).
 // El ESP32 solo usa 2.4 GHz: si el router separa 2.4/5 GHz, usar la de 2.4.
-// ---------------------------------------------------------------
-// REDES WIFI: { "nombre", "clave" }. Para agregar otra, copien una linea.
-// Solo redes de 2.4 GHz (el ESP32 no ve las de 5 GHz).
-// Las que piden usuario en una pagina web NO sirven: usen hotspot del celular.
-// ---------------------------------------------------------------
-const char* REDES[][2] = {
-  {"Pablo",              "pabloc84"},
-  {"Usach-funcionarios", "686868swkplt0"},
-  {"LIB-7266465",        "hB67yXc2bndd"},
-  {"iPhone",             "mecatronica00"},   // hotspot: activar "Maximizar compatibilidad"
-  {"",                   ""},            // <- red 5: escriban aqui nombre y clave
-};
-const int N_REDES = sizeof(REDES) / sizeof(REDES[0]);
+// Las redes se configuran en secrets.h como pares { "nombre", "clave" }.
+// Solo sirven redes de 2.4 GHz y sin pagina de inicio de sesion.
 WiFiMulti redes;
 
 Adafruit_PWMServoDriver pca(0x40);
@@ -672,8 +664,8 @@ BLYNK_WRITE(V6) {
   actualizarSliders();
 }
 
-// V8: menu de Blynk. La app manda 0, 1, 2 (posicion del item):
-//   0 = Apilar, 1 = Ordenar en fila, 2 = Solo escanear  ->  rutina 1, 2, 3
+// V8: menu de Blynk. La app manda 0, 1, 2, 3 (posicion del item):
+//   0 = Apilar, 1 = Ordenar, 2 = Escanear, 3 = Apilado ensenado -> rutina 1..4
 // V16: slider de la pinza (0-100 %), para probar cuanto abre/cierra
 BLYNK_WRITE(V16) { controlManual(6, param.asFloat()); }
 
@@ -681,11 +673,11 @@ BLYNK_WRITE(V16) { controlManual(6, param.asFloat()); }
 BLYNK_WRITE(V17) { if (param.asInt() == 1) pedidoGuardarPinza = 1; }
 BLYNK_WRITE(V18) { if (param.asInt() == 1) pedidoGuardarPinza = 2; }
 
-BLYNK_WRITE(V8) { rutina = constrain(param.asInt(), 0, 2) + 1; }
+BLYNK_WRITE(V8) { rutina = constrain(param.asInt(), 0, 3) + 1; }
 
 // V9: boton "iniciar rutina" -> se avisa al PC desde el loop
 BLYNK_WRITE(V9) {
-  if (param.asInt() == 1 && rutina >= 1 && rutina <= 3 &&
+  if (param.asInt() == 1 && rutina >= 1 && rutina <= 4 &&
       !rutinaActiva && !bloqueado) {
     pedidoRutina = rutina;
   }

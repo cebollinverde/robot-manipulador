@@ -9,6 +9,8 @@ Rutinas (mismo numero que el selector V8 de Blynk):
 Funciona igual con el ESP32 real o con el Simulador (misma interfaz).
 Se ejecuta en un hilo aparte; la interfaz recibe avisos por el callback 'avisar'.
 """
+import json
+import os
 import threading
 import time
 from math import atan2, cos, sin, hypot
@@ -21,7 +23,16 @@ from .comunicacion import ErrorRobot
 from .geometria import interpolar, pose_escaneo, pose_sensor, punto_impacto
 from .inversa import inversa_auto
 
-NOMBRES_RUTINA = {1: "Apilar", 2: "Ordenar en fila", 3: "Solo escanear"}
+NOMBRES_RUTINA = {
+    1: "Apilar",
+    2: "Ordenar en fila",
+    3: "Solo escanear",
+    4: "Apilado enseñado (2 cajas)",
+}
+
+ARCHIVO_APILADO_ENSENADO = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)), "apilado_ensenado.json"
+)
 
 
 class RutinaDetenida(Exception):
@@ -301,6 +312,108 @@ class Rutina:
                 res["z_tope"] -= C.CUBO
         self.avisar("progreso", 1.0)
 
+    def _cargar_apilado_ensenado(self):
+        try:
+            with open(ARCHIVO_APILADO_ENSENADO, encoding="utf-8") as f:
+                datos = json.load(f)
+        except (OSError, ValueError) as e:
+            raise ErrorRobot(f"No se pudo cargar la secuencia enseñada: {e}") from e
+        if datos.get("numero_cajas") != 2 or "traslado_a_b" not in datos:
+            raise ErrorRobot("La secuencia enseñada no contiene dos cajas A-B")
+        return datos
+
+    def _ir_ensenado(self, movimientos, nombre, pasos=6):
+        """Reproduce una postura validada, guardada como porcentajes normalizados."""
+        clave = nombre + "_porcentajes"
+        porcentajes = movimientos.get(clave)
+        if not isinstance(porcentajes, list) or len(porcentajes) != 5:
+            raise ErrorRobot(f"Falta el punto enseñado {clave}")
+        q = dh.porcentajes_a_angulos(porcentajes)
+        self.ir_articular(q, pasos=pasos)
+        return q
+
+    def _esperar_caja_en_a(self, datos, movimientos, numero):
+        """Espera dos mediciones consecutivas y da tiempo para retirar las manos."""
+        umbral = float(movimientos.get("umbral_presencia_a_cm", 10.5))
+        timeout = float(datos.get("espera_caja_s", 120.0))
+        seguridad = float(datos.get("espera_seguridad_s", 2.0))
+        self._reportar(f"COLOQUE CAJA {numero} EN A")
+        limite = time.time() + timeout
+        confirmaciones = 0
+        ultima = None
+        while time.time() < limite:
+            self._revisar()
+            ultima = self.medir()
+            if ultima is not None and C.SENSOR_MIN <= ultima <= umbral:
+                confirmaciones += 1
+                if confirmaciones >= 2:
+                    self._reportar(f"CAJA {numero} DETECTADA - RETIRE MANOS")
+                    fin_seguridad = time.time() + seguridad
+                    while time.time() < fin_seguridad:
+                        self._revisar()
+                        time.sleep(0.05)
+                    return ultima
+            else:
+                confirmaciones = 0
+            time.sleep(0.2)
+        txt = "sin eco" if ultima is None else f"{ultima:.1f} cm"
+        raise ErrorRobot(f"No se detectó la caja {numero} en A ({txt})")
+
+    def _rutina_apilado_ensenado(self):
+        """Reproduce la trayectoria A-B validada físicamente para exactamente dos cajas."""
+        datos = self._cargar_apilado_ensenado()
+        m = datos["traslado_a_b"]
+        self.robot.velocidad(int(datos.get("velocidad", 20)))
+
+        # Primero se alcanza la postura alta más cercana. Esto evita barrer la mesa
+        # si la rutina comienza cerca de A o cerca de la pila B.
+        qa = dh.porcentajes_a_angulos(m["a_alta_porcentajes"])
+        qb = dh.porcentajes_a_angulos(m["b_alta_porcentajes"])
+        distancia_a = sum(abs(a - b) for a, b in zip(self.q, qa))
+        distancia_b = sum(abs(a - b) for a, b in zip(self.q, qb))
+        empieza_en_b = distancia_b < distancia_a
+        q_alta = qb if empieza_en_b else qa
+        self.ir_articular(q_alta, pasos=8)
+        if empieza_en_b:
+            self.ir_articular(qa, pasos=10)
+
+        for numero in (1, 2):
+            self.avisar("progreso", (numero - 1) / 2)
+            self._ir_ensenado(m, "a_aproximacion_sensor", pasos=6)
+            distancia = self._esperar_caja_en_a(datos, m, numero)
+            self._log(f"  Caja {numero} confirmada a {distancia:.2f} cm")
+
+            self.pinza(True)
+            self._ir_ensenado(m, "a_aproximacion_agarre", pasos=3)
+            self._ir_ensenado(m, "a_agarre", pasos=6)
+            self.pinza(False)
+            self._reportar(f"TRASLADANDO CAJA {numero}")
+            self._ir_ensenado(m, "a_elevacion_1", pasos=3)
+            self._ir_ensenado(m, "a_elevacion_2", pasos=3)
+            self._ir_ensenado(m, "a_elevacion_3", pasos=3)
+            self._ir_ensenado(m, "a_alta", pasos=4)
+            self._ir_ensenado(m, "b_alta", pasos=10)
+
+            if numero == 1:
+                self._ir_ensenado(m, "b_aproximacion", pasos=5)
+                self._ir_ensenado(m, "b_deposito", pasos=6)
+                self.pinza(True)
+                self._ir_ensenado(m, "b_aproximacion", pasos=5)
+                self._ir_ensenado(m, "b_alta", pasos=5)
+                self._ir_ensenado(m, "a_alta", pasos=10)
+            else:
+                self._ir_ensenado(m, "b_segundo_nivel_aproximacion", pasos=5)
+                self._ir_ensenado(m, "b_segundo_nivel_precolocacion", pasos=5)
+                # Este último punto incorpora los 5 mm alejándose de la base que
+                # dejaron ambas cajas alineadas en el ensayo físico.
+                self._ir_ensenado(m, "b_segundo_nivel_suelta", pasos=3)
+                self.pinza(True)
+                self._ir_ensenado(m, "b_segundo_nivel_aproximacion", pasos=5)
+                self._ir_ensenado(m, "b_alta", pasos=5)
+
+        self.avisar("progreso", 1.0)
+        self._reportar("DOS CAJAS APILADAS")
+
     def ejecutar(self, numero):
         """Corre la rutina completa. Devuelve 'TERMINADA', 'DETENIDA' o 'ERROR'."""
         self.parar.clear()
@@ -316,9 +429,12 @@ class Rutina:
                 self._rutina_ordenar()
             elif numero == 3:
                 self.escanear_todos()
+            elif numero == 4:
+                self._rutina_apilado_ensenado()
             else:
                 raise ErrorRobot(f"Rutina {numero} no existe")
-            self.a_home()
+            if numero != 4:
+                self.a_home()
         except RutinaDetenida:
             final = "DETENIDA"
             self._log("Rutina detenida.")

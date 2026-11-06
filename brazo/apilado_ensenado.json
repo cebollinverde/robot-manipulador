@@ -1,0 +1,38 @@
+{
+  "descripcion": "Secuencia A-B de dos cajas validada con el brazo real el 2026-11-06",
+  "numero_cajas": 2,
+  "velocidad": 20,
+  "pinza_abierta": 95.0,
+  "pinza_cerrada": 60.0,
+  "espera_caja_s": 120.0,
+  "espera_seguridad_s": 2.0,
+  "traslado_a_b": {
+    "descripcion": "Traslado confirmado de aproximadamente 24 cm y 84 grados de giro de base",
+    "sensor_caja_en_a_ensayos_cm": [9.26, 8.22],
+    "umbral_presencia_a_cm": 10.5,
+    "a_centro_caja_xyz_cm": [8.0295, -11.4664, -8.549],
+    "a_aproximacion_sensor_porcentajes": [14.17, 39.86, 87.25, 58.82, 5.06],
+    "a_aproximacion_agarre_porcentajes": [14.167, 42.189, 92.145, 58.824, 9.733],
+    "a_agarre_porcentajes": [14.167, 24.217, 84.822, 58.824, 19.93],
+    "a_elevacion_1_porcentajes": [14.167, 31.144, 86.543, 58.824, 10.983],
+    "a_elevacion_2_porcentajes": [14.167, 36.625, 89.559, 58.824, 10.813],
+    "a_elevacion_3_porcentajes": [14.167, 42.189, 92.145, 58.824, 9.733],
+    "a_alta_porcentajes": [14.169, 53.458, 95.982, 58.824, 4.958],
+    "b_alta_porcentajes": [84.189, 35.857, 68.231, 58.824, 2.005],
+    "b_aproximacion_porcentajes": [84.1891, 25.8766, 65.7015, 58.8235, 10.8387],
+    "b_deposito_porcentajes": [84.1891, 8.3154, 54.8611, 58.8235, 14.07],
+    "b_segundo_nivel_aproximacion_porcentajes": [84.189, 31.765, 65.844, 58.824, 0.886],
+    "b_segundo_nivel_precolocacion_porcentajes": [84.189, 23.254, 62.675, 58.824, 6.035],
+    "b_segundo_nivel_suelta_porcentajes": [84.19, 21.88, 59.63, 58.82, 3.01],
+    "ajuste_final_alejar_base_cm": 0.5
+  },
+  "apilado": {
+    "aproximacion_porcentajes": [84.1891, 25.8766, 65.7015, 58.8235, 10.8387],
+    "primer_nivel_porcentajes": [84.1891, 8.3154, 54.8611, 58.8235, 14.07],
+    "altura_caja_cm": 3.0,
+    "segundo_nivel_aproximacion_porcentajes": [84.189, 31.765, 65.844, 58.824, 0.886],
+    "segundo_nivel_precolocacion_porcentajes": [84.189, 23.254, 62.675, 58.824, 6.035],
+    "segundo_nivel_suelta_porcentajes": [84.19, 21.88, 59.63, 58.82, 3.01],
+    "ajuste_final_alejar_base_cm": 0.5
+  }
+}
