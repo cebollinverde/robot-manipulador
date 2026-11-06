@@ -24,7 +24,7 @@
     {"pin":"V9","name":"Ejecutar rutina","display":"Ejecutar rutina","type":"double","min":0,"max":1,"default":0,"unit":"%"},
     {"pin":"V10","name":"Detener rutina","display":"STOP / Reanudar","type":"integer","min":0,"max":1,"default":0,"unit":"%"},
     {"pin":"V11","name":"Estado de la rutina","display":"Estado de la rutina","type":"string","unit":null},
-    {"pin":"V12","name":"Velocidad","display":"Velocidad","type":"integer","min":1,"max":100,"default":20,"unit":null},
+    {"pin":"V12","name":"Velocidad","display":"Velocidad","type":"integer","min":1,"max":100,"default":30,"unit":null},
     {"pin":"V13","name":"TCP X","display":"TCP X","type":"double","min":-50,"max":50,"default":0,"unit":null},
     {"pin":"V14","name":"TCP Y","display":"TCP Y","type":"double","min":-50,"max":50,"default":0,"unit":null},
     {"pin":"V15","name":"TCP Z","display":"TCP Z","type":"double","min":-50,"max":50,"default":0,"unit":null},

@@ -364,7 +364,7 @@ class Rutina:
         """Reproduce la trayectoria A-B validada físicamente para exactamente dos cajas."""
         datos = self._cargar_apilado_ensenado()
         m = datos["traslado_a_b"]
-        self.robot.velocidad(int(datos.get("velocidad", 20)))
+        self.robot.velocidad(int(datos.get("velocidad", 30)))
 
         # Primero se alcanza la postura alta más cercana. Esto evita barrer la mesa
         # si la rutina comienza cerca de A o cerca de la pila B.

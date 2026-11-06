@@ -74,9 +74,9 @@ volatile bool pedidoEscaneo = false;
 
 const unsigned long VIGILANCIA_MS = 15000;   // sin noticias del PC -> liberar
 
-// Coincide con la velocidad validada para la rutina enseñada y con el valor
+// Coincide con la velocidad de la rutina enseñada y con el valor
 // predeterminado de V12 en Blynk.
-volatile int velocidad = 20;
+volatile int velocidad = 30;
 volatile int rutina = 1;      // si la app aun no manda V8: Apilar
 volatile bool rutinaActiva = false;
 volatile bool bloqueado = false;

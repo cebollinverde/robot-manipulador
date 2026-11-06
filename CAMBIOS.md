@@ -64,11 +64,21 @@ registrada la configuración que fue validada con el brazo físico.
   V9 ejecuta la opción elegida y V10 funciona como STOP/reanudación.
 - Se añadieron al panel la velocidad, el estado de rutina, los seis controles
   manuales, la calibración de la pinza, el HC-SR04 y las coordenadas TCP.
-- V12 quedó con 20 como valor predeterminado, igual que la secuencia validada.
+- V12 quedó con 30 como valor predeterminado para acelerar el recorrido.
 - Se corrigió la reconexión del firmware: ahora sincroniza V8 y V12 desde Blynk
   sin sobrescribir inmediatamente la velocidad almacenada en la nube.
 - La definición reproducible del panel quedó respaldada en
   `docs/blynk_template.json`, sin tokens ni claves WiFi.
+
+### Ajuste final de aproximación y velocidad
+
+- La postura de espera del HC-SR04 en A se elevó 1 cm para impedir que los dedos
+  rocen la caja antes de comenzar el agarre.
+- El umbral de presencia se amplió de 10,5 a 12 cm para compensar la nueva altura.
+- La velocidad de la rutina enseñada aumentó de 20 a 30 sobre 100, un 50 % más,
+  manteniendo los puntos intermedios y la espera de seguridad de 2 segundos.
+- Se añadió `platformio.ini` para compilar y cargar el ESP32 desde PlatformIO en
+  VS Code con el entorno `esp32dev`.
 
 ## Archivos principales modificados
 
@@ -77,6 +87,7 @@ registrada la configuración que fue validada con el brazo físico.
 | `.gitignore` | Evitar que las credenciales locales se suban a Git |
 | `Manipulador/Manipulador.ino` | Credenciales externas y soporte de Rutina 4 en Blynk |
 | `Manipulador/secrets.example.h` | Plantilla segura para Blynk y WiFi |
+| `platformio.ini` | Compilación y carga reproducibles del ESP32 desde VS Code |
 | `brazo/zona_trabajo.json` | Puntos A, B y pila calibrados físicamente |
 | `brazo/apilado_ensenado.json` | Trayectoria exacta y parámetros de la prueba exitosa |
 | `brazo/rutina.py` | Detección, espera segura y ejecución automática de dos cajas |

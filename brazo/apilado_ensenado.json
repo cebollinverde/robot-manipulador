@@ -1,7 +1,7 @@
 {
   "descripcion": "Secuencia A-B de dos cajas validada con el brazo real el 2026-11-06",
   "numero_cajas": 2,
-  "velocidad": 20,
+  "velocidad": 30,
   "pinza_abierta": 95.0,
   "pinza_cerrada": 60.0,
   "espera_caja_s": 120.0,
@@ -9,9 +9,10 @@
   "traslado_a_b": {
     "descripcion": "Traslado confirmado de aproximadamente 24 cm y 84 grados de giro de base",
     "sensor_caja_en_a_ensayos_cm": [9.26, 8.22],
-    "umbral_presencia_a_cm": 10.5,
+    "altura_espera_sensor_extra_cm": 1.0,
+    "umbral_presencia_a_cm": 12.0,
     "a_centro_caja_xyz_cm": [8.0295, -11.4664, -8.549],
-    "a_aproximacion_sensor_porcentajes": [14.17, 39.86, 87.25, 58.82, 5.06],
+    "a_aproximacion_sensor_porcentajes": [14.169, 45.161, 89.474, 58.824, 3.8],
     "a_aproximacion_agarre_porcentajes": [14.167, 42.189, 92.145, 58.824, 9.733],
     "a_agarre_porcentajes": [14.167, 24.217, 84.822, 58.824, 19.93],
     "a_elevacion_1_porcentajes": [14.167, 31.144, 86.543, 58.824, 10.983],

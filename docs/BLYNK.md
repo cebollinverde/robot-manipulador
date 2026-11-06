@@ -7,7 +7,7 @@
 - Dispositivo: **Brazo ESP32**
 - Flujos: V0–V18
 - Panel web: publicado y aplicado al dispositivo
-- Velocidad predeterminada: 20/100
+- Velocidad predeterminada: 30/100
 
 El token del dispositivo y las redes WiFi no forman parte de este respaldo.
 Solo deben existir en `Manipulador/secrets.h`, que Git ignora.
@@ -44,7 +44,7 @@ EJECUTAR mientras alguien tenga las manos en el rango de movimiento.
 | V9 | Botón EJECUTAR | Inicia la rutina seleccionada |
 | V10 | Switch STOP / Reanudar | 1 detiene; 0 reanuda |
 | V11 | Etiqueta Estado de la rutina | Estado enviado por Python/ESP32 |
-| V12 | Slider Velocidad | 1–100; valor predeterminado 20 |
+| V12 | Slider Velocidad | 1–100; valor predeterminado 30 |
 | V13 | Etiqueta TCP X | Coordenada X calculada por la DH |
 | V14 | Etiqueta TCP Y | Coordenada Y calculada por la DH |
 | V15 | Etiqueta TCP Z | Coordenada Z calculada por la DH |

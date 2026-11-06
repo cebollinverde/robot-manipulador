@@ -3,8 +3,10 @@ __pycache__/
 *.pyo
 .venv/
 venv/
-.vscode/
+.vscode/*
+!.vscode/extensions.json
 .idea/
+.pio/
 
 # Credenciales locales del ESP32 (Blynk + WiFi)
 Manipulador/secrets.h

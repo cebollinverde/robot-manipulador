@@ -20,6 +20,7 @@ proyecto/
 │   ├── rutina.py           ← detectar → acercarse → tomar → apilar / ordenar
 │   └── dibujo.py           ← vista 3D (también genera figuras para el informe)
 ├── Manipulador/Manipulador.ino   ← ESP32 modificado
+├── platformio.ini                ← compilación y carga del ESP32 desde VS Code / PlatformIO
 └── docs/diagrama_conexiones.png  ← diagrama eléctrico (+ .svg y el script que lo genera)
 ```
 
@@ -36,7 +37,10 @@ python -m brazo.dh 0 62 -89 0 2    # lo mismo para los ángulos q1..q5 que quier
 1. `pip install numpy matplotlib pyserial`
 2. Copiar `Manipulador/secrets.example.h` como `Manipulador/secrets.h` y escribir ahí el
    token de Blynk y las redes WiFi. `secrets.h` está ignorado por Git.
-3. Cargar `Manipulador/Manipulador.ino` al ESP32 (librerías: **Blynk**, **Adafruit PWM Servo Driver**).
+3. Abrir la carpeta en VS Code con PlatformIO y ejecutar **Project Tasks → esp32dev → Upload**.
+   PlatformIO instala automáticamente **Blynk** y **Adafruit PWM Servo Driver**.
+   Desde una terminal también se puede usar:
+   `pio run -e esp32dev -t upload --upload-port /dev/ttyUSB1`.
 4. `python brazo_gui.py`
 5. Elegir **Simulación** para probar sin brazo, o el puerto del ESP32 (COMx / /dev/ttyUSB0) → **Conectar**.
    Cerrar el Monitor Serie de Arduino antes: el puerto no se puede abrir dos veces.
@@ -66,7 +70,8 @@ de V10 queda disponible durante toda la ejecución.
 | 3 | Solo escanea (para calibrar el sensor) |
 | 4 | Repite el apilado A→B de dos cajas enseñado físicamente (`apilado_ensenado.json`) |
 
-La rutina 4 trabaja a velocidad 20/100. Espera una caja en A, la confirma con dos
+La rutina 4 trabaja a velocidad 30/100. Espera una caja en A desde una postura
+1 cm más alta que la calibración original, la confirma con dos
 mediciones del HC-SR04, avisa que se retiren las manos y comienza tras 2 segundos.
 Después de dejar la primera caja vuelve a A y espera la segunda. Su último movimiento
 incluye la corrección validada de 5 mm alejándose de la base antes de abrir la pinza.
@@ -108,7 +113,7 @@ ESP32 → PC sin que se pida: `RUTINA,n` (V9), `STOP_REQUEST` (V10), `READY` (al
 | V16 | Slider 0–100 | Pinza (para probar cuánto abre/cierra) |
 | V17 / V18 | Botón Push | Guardar la posición actual del V16 como «abierta» / «cerrada» |
 
-La plantilla publicada usa `TMPL24p6M39YQ`. V12 tiene 20 como valor
+La plantilla publicada usa `TMPL24p6M39YQ`. V12 tiene 30 como valor
 predeterminado. Al reconectarse, el ESP32 sincroniza V8 y V12 desde Blynk sin
 sobrescribir el valor almacenado en la nube.
 
