@@ -47,8 +47,9 @@ python -m brazo.dh 0 62 -89 0 2    # lo mismo para los ángulos q1..q5 que quier
 
 ## Qué hace cada parte
 
-**Python (PC)** calcula todo lo matemático: DH, cinemática inversa, trayectoria y la secuencia
-de la rutina. Le manda al ESP32 porcentajes 0–100 % por serial.
+**Python (PC)** calcula el DH, la cinemática inversa y las rutinas generales 1–3.
+Le manda al ESP32 porcentajes 0–100 % por serial. La rutina 4 de dos cajas está
+también guardada en el firmware y no necesita que Python esté abierto.
 
 **ESP32** mueve los servos con rampa (velocidad), lee el sensor, y habla con Blynk.
 Blynk/WiFi corre en el núcleo 0, así una caída de WiFi no congela el brazo.
@@ -56,10 +57,10 @@ Blynk/WiFi corre en el núcleo 0, así una caída de WiFi no congela el brazo.
 **App Blynk** mueve el brazo a mano, abre/cierra la pinza, pide rutinas y tiene el STOP.
 
 El panel web de la plantilla **Manipulador Robotico** usa los 19 pines virtuales
-V0–V18. Para repetir la secuencia validada: mantener `brazo_gui.py` abierto y
-conectado al ESP32, elegir **Apilado 2 cajas** en V8 y pulsar **EJECUTAR** en V9.
-El selector solo elige la rutina; el movimiento comienza al pulsar V9. El STOP
-de V10 queda disponible durante toda la ejecución.
+V0–V18. Para repetir la secuencia validada no hace falta abrir el computador:
+elegir **Apilado 2 cajas** en V8 y pulsar **EJECUTAR** en V9. El selector solo
+elige la rutina; el movimiento comienza al pulsar V9. El STOP de V10 queda
+disponible durante toda la ejecución.
 
 ### La rutina (V8 = 1, 2, 3 o 4 y luego V9, o el botón ▶ de la interfaz)
 
@@ -70,7 +71,7 @@ de V10 queda disponible durante toda la ejecución.
 | 3 | Solo escanea (para calibrar el sensor) |
 | 4 | Repite el apilado A→B de dos cajas enseñado físicamente (`apilado_ensenado.json`) |
 
-La rutina 4 trabaja a velocidad 30/100. Espera una caja en A desde una postura
+La rutina 4 trabaja como mínimo a velocidad 30/100 (V12 puede aumentarla). Espera una caja en A desde una postura
 1 cm más alta que la calibración original, la confirma con dos
 mediciones del HC-SR04, avisa que se retiren las manos y comienza tras 2 segundos.
 Después de dejar la primera caja vuelve a A y espera la segunda. Su último movimiento
@@ -95,7 +96,8 @@ Bajada y subida son en línea recta (cartesianas, IK en cada tramo de 1,5 cm).
 | `XYZ,x,y,z` | `LISTO,XYZ` (se muestra en la app) |
 | `REPORT,texto` | `LISTO,REPORT` (estado en la app) |
 
-ESP32 → PC sin que se pida: `RUTINA,n` (V9), `STOP_REQUEST` (V10), `READY` (al reiniciar).
+ESP32 → PC sin que se pida: `RUTINA,n` para las rutinas 1–3 (V9),
+`STOP_REQUEST` (V10), `READY` (al reiniciar). La rutina 4 se ejecuta en el ESP32.
 
 ## Pines virtuales de Blynk
 

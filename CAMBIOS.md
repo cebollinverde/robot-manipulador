@@ -80,6 +80,22 @@ registrada la configuración que fue validada con el brazo físico.
 - Se añadió `platformio.ini` para compilar y cargar el ESP32 desde PlatformIO en
   VS Code con el entorno `esp32dev`.
 
+### Corrección de ejecución desde Blynk
+
+- Se eliminó la dependencia del programa `brazo_gui.py` para **Apilado 2 cajas**.
+  La trayectoria A→B, sus puntos intermedios, la pinza 95/60 % y la espera del
+  HC-SR04 quedaron implementados como una máquina de estados en el ESP32.
+- V9 inicia esta secuencia directamente; las rutinas genéricas 1–3 conservan la
+  comunicación con Python.
+- El proceso sigue atendiendo Blynk durante todo el recorrido: V10 detiene y
+  cancela la secuencia sin esperar a que termine un tramo.
+- Se añadieron mensajes de estado para la colocación, detección, traslado y
+  depósito de ambas cajas, además del timeout de 120 segundos por caja.
+- Al iniciar, la rutina corrige automáticamente velocidades antiguas inferiores
+  a 30 y respeta cualquier valor mayor configurado en V12.
+- El firmware autónomo se compiló y cargó con PlatformIO; se verificó por serial
+  que el ESP32 quedó `IDLE`, conectado a WiFi y conectado a Blynk.
+
 ## Archivos principales modificados
 
 | Archivo | Motivo |

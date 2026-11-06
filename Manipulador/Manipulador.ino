@@ -1,7 +1,8 @@
 /*
   Manipulador robotico - ESP32 + PCA9685 + HC-SR04 + Blynk
   ---------------------------------------------------------
-  Flujo: App Blynk <-> ESP32 <-> Python (PC por USB, calcula el DH y la rutina)
+  Flujo: App Blynk <-> ESP32. Las rutinas generales siguen pudiendo usar
+  Python por USB; la secuencia validada de dos cajas corre dentro del ESP32.
 
   Cambios respecto a la version anterior:
    1. Blynk/WiFi corre en el NUCLEO 0 (tarea propia). El nucleo 1 (loop) solo
@@ -81,6 +82,48 @@ volatile int rutina = 1;      // si la app aun no manda V8: Apilar
 volatile bool rutinaActiva = false;
 volatile bool bloqueado = false;
 
+// La rutina 4 (dos cajas A->B) se ejecuta sin PC. Cada estado espera que el
+// movimiento anterior termine, de modo que Blynk y STOP siguen respondiendo.
+enum EstadoApiladoBlynk : uint8_t {
+  AP_INACTIVO,
+  AP_INICIO_A, AP_INICIO_B, AP_SENSOR, AP_ESPERA_CAJA, AP_SEGURIDAD,
+  AP_ABRIR_A, AP_APROX_AGARRE, AP_AGARRE, AP_CERRAR_A,
+  AP_ELEVACION_1, AP_ELEVACION_2, AP_ELEVACION_3, AP_A_ALTA, AP_B_ALTA,
+  AP_B1_APROX, AP_B1_DEPOSITO, AP_B1_ABRIR, AP_B1_RETIRAR, AP_B1_ALTA,
+  AP_VOLVER_A,
+  AP_B2_APROX, AP_B2_PRECOLOCAR, AP_B2_SUELTA, AP_B2_ABRIR,
+  AP_B2_RETIRAR, AP_B2_ALTA
+};
+
+EstadoApiladoBlynk estadoApilado = AP_INACTIVO;
+bool esperandoPC = false;
+int cajaApilado = 0;
+int confirmacionesCaja = 0;
+unsigned long inicioEstadoApilado = 0;
+unsigned long inicioEsperaCaja = 0;
+unsigned long ultimaMedicionCaja = 0;
+
+const unsigned long ESPERA_CAJA_MS = 120000;
+const unsigned long SEGURIDAD_MANOS_MS = 2000;
+const float UMBRAL_CAJA_CM = 12.0f;
+const float PINZA_ABIERTA_RUTINA = 95.0f;
+const float PINZA_CERRADA_RUTINA = 60.0f;
+
+// Posturas normalizadas ensenadas y validadas fisicamente el 2026-11-06.
+const float P_A_SENSOR[5] = {14.169f, 45.161f, 89.474f, 58.824f, 3.800f};
+const float P_A_APROX[5] = {14.167f, 42.189f, 92.145f, 58.824f, 9.733f};
+const float P_A_AGARRE[5] = {14.167f, 24.217f, 84.822f, 58.824f, 19.930f};
+const float P_A_ELEV1[5] = {14.167f, 31.144f, 86.543f, 58.824f, 10.983f};
+const float P_A_ELEV2[5] = {14.167f, 36.625f, 89.559f, 58.824f, 10.813f};
+const float P_A_ELEV3[5] = {14.167f, 42.189f, 92.145f, 58.824f, 9.733f};
+const float P_A_ALTA[5] = {14.169f, 53.458f, 95.982f, 58.824f, 4.958f};
+const float P_B_ALTA[5] = {84.189f, 35.857f, 68.231f, 58.824f, 2.005f};
+const float P_B1_APROX[5] = {84.1891f, 25.8766f, 65.7015f, 58.8235f, 10.8387f};
+const float P_B1_DEPOSITO[5] = {84.1891f, 8.3154f, 54.8611f, 58.8235f, 14.070f};
+const float P_B2_APROX[5] = {84.189f, 31.765f, 65.844f, 58.824f, 0.886f};
+const float P_B2_PRE[5] = {84.189f, 23.254f, 62.675f, 58.824f, 6.035f};
+const float P_B2_SUELTA[5] = {84.190f, 21.880f, 59.630f, 58.820f, 3.010f};
+
 // Pedidos de Blynk (nucleo 0) que atiende el loop (nucleo 1)
 volatile int pedidoRutina = 0;
 volatile bool pedidoStop = false;
@@ -112,6 +155,8 @@ void publicarInterruptor();
 void publicarVelocidad();
 void publicarDistancia(float d);
 void iniciarBlynk();
+void iniciarApiladoBlynk();
+void atenderApiladoBlynk();
 
 
 // ==================================================
@@ -170,6 +215,8 @@ bool enMovimiento() {
 
 void detener() {
   for (int i = 0; i < 6; i++) destino[i] = actual[i];
+  estadoApilado = AP_INACTIVO;
+  esperandoPC = false;
   rutinaActiva = false;
   bloqueado = true;
   publicarEstado("DETENIDO");
@@ -212,6 +259,198 @@ float distancia() {
     v[b + 1] = x;
   }
   return v[n / 2];
+}
+
+
+// ==================================================
+// 4. RUTINA BLYNK AUTONOMA: DOS CAJAS A -> B
+// ==================================================
+
+void irPosturaApilado(EstadoApiladoBlynk siguiente, const float postura[5],
+                      const char* texto = nullptr) {
+  for (int i = 0; i < 5; i++) fijarServo(i + 1, postura[i]);
+  estadoApilado = siguiente;
+  inicioEstadoApilado = millis();
+  actualizarSliders();
+  if (texto != nullptr) publicarEstado(texto);
+}
+
+void terminarApiladoBlynk(const char* texto) {
+  estadoApilado = AP_INACTIVO;
+  esperandoPC = false;
+  rutinaActiva = false;
+  actualizarSliders();
+  publicarEstado(texto);
+  Serial.print("APILADO,");
+  Serial.println(texto);
+}
+
+void esperarCajaApilado() {
+  estadoApilado = AP_ESPERA_CAJA;
+  inicioEstadoApilado = millis();
+  inicioEsperaCaja = millis();
+  ultimaMedicionCaja = 0;
+  confirmacionesCaja = 0;
+  char texto[32];
+  snprintf(texto, sizeof(texto), "COLOQUE CAJA %d EN A", cajaApilado);
+  publicarEstado(texto);
+}
+
+void iniciarApiladoBlynk() {
+  rutinaActiva = true;
+  esperandoPC = false;
+  cajaApilado = 1;
+  confirmacionesCaja = 0;
+
+  // Evita que un valor antiguo de V12 deje la rutina practicamente inmovil.
+  // Se conserva cualquier ajuste del usuario que sea mas rapido que 30.
+  if (velocidad < 30) velocidad = 30;
+  publicarVelocidad();
+
+  // Igual que la rutina Python: primero sube por el punto alto mas cercano.
+  float distanciaA = 0, distanciaB = 0;
+  for (int i = 0; i < 5; i++) {
+    float ahora = normalizar(i, actual[i]);
+    distanciaA += fabs(ahora - P_A_ALTA[i]);
+    distanciaB += fabs(ahora - P_B_ALTA[i]);
+  }
+  if (distanciaB < distanciaA) {
+    irPosturaApilado(AP_INICIO_B, P_B_ALTA, "INICIANDO DESDE B");
+  } else {
+    irPosturaApilado(AP_INICIO_A, P_A_ALTA, "INICIANDO DESDE A");
+  }
+  Serial.println("APILADO,INICIO AUTONOMO");
+}
+
+void atenderApiladoBlynk() {
+  if (estadoApilado == AP_INACTIVO || bloqueado) return;
+
+  switch (estadoApilado) {
+    case AP_INICIO_B:
+      if (!enMovimiento()) irPosturaApilado(AP_INICIO_A, P_A_ALTA, "YENDO A");
+      break;
+    case AP_INICIO_A:
+    case AP_VOLVER_A:
+      if (!enMovimiento()) irPosturaApilado(AP_SENSOR, P_A_SENSOR, "BUSCANDO CAJA");
+      break;
+    case AP_SENSOR:
+      if (!enMovimiento()) esperarCajaApilado();
+      break;
+    case AP_ESPERA_CAJA:
+      if (millis() - inicioEsperaCaja >= ESPERA_CAJA_MS) {
+        terminarApiladoBlynk("CAJA NO DETECTADA");
+        break;
+      }
+      if (millis() - ultimaMedicionCaja >= 300) {
+        ultimaMedicionCaja = millis();
+        float d = distancia();
+        publicarDistancia(d);
+        if (d >= 2.0f && d <= UMBRAL_CAJA_CM) confirmacionesCaja++;
+        else confirmacionesCaja = 0;
+        if (confirmacionesCaja >= 2) {
+          estadoApilado = AP_SEGURIDAD;
+          inicioEstadoApilado = millis();
+          char texto[32];
+          snprintf(texto, sizeof(texto), "CAJA %d: RETIRE MANOS", cajaApilado);
+          publicarEstado(texto);
+        }
+      }
+      break;
+    case AP_SEGURIDAD:
+      if (millis() - inicioEstadoApilado >= SEGURIDAD_MANOS_MS) {
+        fijarServo(6, PINZA_ABIERTA_RUTINA);
+        estadoApilado = AP_ABRIR_A;
+        actualizarSliders();
+        publicarEstado(cajaApilado == 1 ? "TOMANDO CAJA 1" : "TOMANDO CAJA 2");
+      }
+      break;
+    case AP_ABRIR_A:
+      if (!enMovimiento()) irPosturaApilado(AP_APROX_AGARRE, P_A_APROX);
+      break;
+    case AP_APROX_AGARRE:
+      if (!enMovimiento()) irPosturaApilado(AP_AGARRE, P_A_AGARRE);
+      break;
+    case AP_AGARRE:
+      if (!enMovimiento()) {
+        fijarServo(6, PINZA_CERRADA_RUTINA);
+        estadoApilado = AP_CERRAR_A;
+        actualizarSliders();
+      }
+      break;
+    case AP_CERRAR_A:
+      if (!enMovimiento()) {
+        publicarEstado(cajaApilado == 1 ? "TRASLADANDO CAJA 1" : "TRASLADANDO CAJA 2");
+        irPosturaApilado(AP_ELEVACION_1, P_A_ELEV1);
+      }
+      break;
+    case AP_ELEVACION_1:
+      if (!enMovimiento()) irPosturaApilado(AP_ELEVACION_2, P_A_ELEV2);
+      break;
+    case AP_ELEVACION_2:
+      if (!enMovimiento()) irPosturaApilado(AP_ELEVACION_3, P_A_ELEV3);
+      break;
+    case AP_ELEVACION_3:
+      if (!enMovimiento()) irPosturaApilado(AP_A_ALTA, P_A_ALTA);
+      break;
+    case AP_A_ALTA:
+      if (!enMovimiento()) irPosturaApilado(AP_B_ALTA, P_B_ALTA);
+      break;
+    case AP_B_ALTA:
+      if (!enMovimiento()) {
+        if (cajaApilado == 1)
+          irPosturaApilado(AP_B1_APROX, P_B1_APROX, "DEPOSITANDO CAJA 1");
+        else
+          irPosturaApilado(AP_B2_APROX, P_B2_APROX, "APILANDO CAJA 2");
+      }
+      break;
+    case AP_B1_APROX:
+      if (!enMovimiento()) irPosturaApilado(AP_B1_DEPOSITO, P_B1_DEPOSITO);
+      break;
+    case AP_B1_DEPOSITO:
+      if (!enMovimiento()) {
+        fijarServo(6, PINZA_ABIERTA_RUTINA);
+        estadoApilado = AP_B1_ABRIR;
+        actualizarSliders();
+      }
+      break;
+    case AP_B1_ABRIR:
+      if (!enMovimiento()) irPosturaApilado(AP_B1_RETIRAR, P_B1_APROX);
+      break;
+    case AP_B1_RETIRAR:
+      if (!enMovimiento()) irPosturaApilado(AP_B1_ALTA, P_B_ALTA);
+      break;
+    case AP_B1_ALTA:
+      if (!enMovimiento()) {
+        cajaApilado = 2;
+        irPosturaApilado(AP_VOLVER_A, P_A_ALTA, "VOLVIENDO POR CAJA 2");
+      }
+      break;
+    case AP_B2_APROX:
+      if (!enMovimiento()) irPosturaApilado(AP_B2_PRECOLOCAR, P_B2_PRE);
+      break;
+    case AP_B2_PRECOLOCAR:
+      if (!enMovimiento()) irPosturaApilado(AP_B2_SUELTA, P_B2_SUELTA);
+      break;
+    case AP_B2_SUELTA:
+      if (!enMovimiento()) {
+        fijarServo(6, PINZA_ABIERTA_RUTINA);
+        estadoApilado = AP_B2_ABRIR;
+        actualizarSliders();
+      }
+      break;
+    case AP_B2_ABRIR:
+      if (!enMovimiento()) irPosturaApilado(AP_B2_RETIRAR, P_B2_APROX);
+      break;
+    case AP_B2_RETIRAR:
+      if (!enMovimiento()) irPosturaApilado(AP_B2_ALTA, P_B_ALTA);
+      break;
+    case AP_B2_ALTA:
+      if (!enMovimiento()) terminarApiladoBlynk("DOS CAJAS APILADAS");
+      break;
+    default:
+      terminarApiladoBlynk("ERROR DE RUTINA");
+      break;
+  }
 }
 
 
@@ -405,6 +644,7 @@ void comando(String dato) {
     estado.trim();
     if (estado == "TERMINADA" || estado == "DETENIDA" || estado == "ERROR") {
       rutinaActiva = false;
+      esperandoPC = false;
     } else if (!bloqueado) {
       rutinaActiva = true;            // Python esta ejecutando: bloquear sliders
     }
@@ -440,15 +680,21 @@ void atenderPedidos() {
   if (r != 0) {
     pedidoRutina = 0;
     if (!rutinaActiva && !bloqueado) {
-      rutinaActiva = true;
-      ultimoSerial = millis();
-      Serial.print("RUTINA,");
-      Serial.println(r);
-      publicarEstado("ESPERANDO PC");
+      if (r == 4) {
+        iniciarApiladoBlynk();
+      } else {
+        rutinaActiva = true;
+        esperandoPC = true;
+        ultimoSerial = millis();
+        Serial.print("RUTINA,");
+        Serial.println(r);
+        publicarEstado("ESPERANDO PC");
+      }
     }
   }
   // Vigilancia: el PC no contesto -> devolver el control a la app
-  if (rutinaActiva && millis() - ultimoSerial > VIGILANCIA_MS) {
+  if (esperandoPC && rutinaActiva && millis() - ultimoSerial > VIGILANCIA_MS) {
+    esperandoPC = false;
     rutinaActiva = false;
     publicarEstado("PC SIN RESPUESTA");
   }
@@ -493,6 +739,7 @@ void loop() {
   }
   mover();
   atenderPedidos();
+  atenderApiladoBlynk();
 
   if (hayInfo) {                       // mensajes de WiFi/Blynk para el Monitor serie
     char copia[200];
@@ -504,7 +751,7 @@ void loop() {
   }
 
   // Distancia para la app cada 1 s (solo con el brazo quieto: no frena el movimiento)
-  if (millis() - ultimoSensor >= 1000 && !enMovimiento()) {
+  if (millis() - ultimoSensor >= 1000 && !enMovimiento() && !rutinaActiva) {
     ultimoSensor = millis();
     publicarDistancia(lecturaUnica());
   }
@@ -677,7 +924,8 @@ BLYNK_WRITE(V18) { if (param.asInt() == 1) pedidoGuardarPinza = 2; }
 
 BLYNK_WRITE(V8) { rutina = constrain(param.asInt(), 0, 3) + 1; }
 
-// V9: boton "iniciar rutina" -> se avisa al PC desde el loop
+// V9: boton "iniciar rutina". La rutina 4 corre en el ESP32; 1..3 conservan
+// compatibilidad con el programa Python por USB.
 BLYNK_WRITE(V9) {
   if (param.asInt() == 1 && rutina >= 1 && rutina <= 4 &&
       !rutinaActiva && !bloqueado) {
